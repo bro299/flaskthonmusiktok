@@ -17,7 +17,7 @@ def video():
 
 @app.route('/music')
 def music():
-    return render_template('https://donmustik.onreader.com')
+    return render_template('https://donmustik.onrender.com')
 
 @app.route('/contact')
 def contact():

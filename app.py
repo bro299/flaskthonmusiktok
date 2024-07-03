@@ -21,7 +21,7 @@ def music():
 
 @app.route('/contact')
 def contact():
-    return render_template('contact.html')
+    return render_template('https://kontakbeginnernoob.vercel.app')
 
 @app.route('/download', methods=['POST'])
 def download():

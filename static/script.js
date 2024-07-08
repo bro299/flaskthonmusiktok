@@ -2,6 +2,8 @@ document.getElementById('downloadForm').addEventListener('submit', async (event)
     event.preventDefault();
     const videoUrl = document.getElementById('videoUrl').value;
 
+    document.getElementById('loadingSpinner').style.display = 'block';
+
     try {
         const response = await fetch('/download', {
             method: 'POST',
@@ -13,6 +15,8 @@ document.getElementById('downloadForm').addEventListener('submit', async (event)
 
         const data = await response.json();
         console.log(data);
+        // Sembunyikan spinner loading
+        document.getElementById('loadingSpinner').style.display = 'none';
 
         if (data.audioUrl && data.thumbnailUrl && data.title) {
             const fileName = `TikTok_Audio_${Date.now()}.mp3`;
@@ -33,6 +37,8 @@ document.getElementById('downloadForm').addEventListener('submit', async (event)
     } catch (error) {
         console.error('Error:', error);
         document.getElementById('result').textContent = 'Error downloading video';
+    } finally {
+        document.querySelector('.loading-spinner').classList.add('d-none');
     }
 });
 
@@ -49,24 +55,68 @@ document.getElementById('siteName').addEventListener('click', function() {
 document.getElementById('themeToggle').addEventListener('click', function() {
     const body = document.body;
     const navbar = document.querySelector('.navbar');
-    const formControl = document.querySelectorAll('.form-control');
+    const formControls = document.querySelectorAll('.form-control');
 
     body.classList.toggle('dark-theme');
     body.classList.toggle('light-theme');
     
-    navbar.classList.toggle('dark-theme');
-    navbar.classList.toggle('light-theme');
+    navbar.classList.toggle('navbar-dark');
+    navbar.classList.toggle('navbar-light');
+    navbar.classList.toggle('bg-dark');
+    navbar.classList.toggle('bg-light');
 
-    formControl.forEach(control => {
+    formControls.forEach(control => {
         control.classList.toggle('dark-theme');
         control.classList.toggle('light-theme');
     });
 
+    const icon = this.querySelector('i');
     if (body.classList.contains('dark-theme')) {
-        this.querySelector('i').classList.remove('fa-sun');
-        this.querySelector('i').classList.add('fa-moon');
+        icon.classList.replace('fa-sun', 'fa-moon');
     } else {
-        this.querySelector('i').classList.remove('fa-moon');
-        this.querySelector('i').classList.add('fa-sun');
+        icon.classList.replace('fa-moon', 'fa-sun');
     }
 });
+
+const setLanguage = (lang) => {
+    const translations = {
+        'en': {
+            pageTitle: 'TikTok Music Downloader',
+            placeholder: 'Paste TikTok link here',
+            pasteButton: 'Paste',
+            submitButton: 'Download',
+            instructionsTitle: 'How to Use the Website:',
+            instructions: `
+                <li>Paste the TikTok video link you want to download into the field above.</li>
+                <li>Click the "Paste" button to paste the link from your clipboard.</li>
+                <li>Click the "Download" button to start the download process.</li>
+                <li>Wait until the download is complete and the download link appears below.</li>
+                <li>Click the "Download MP3" button to save the audio file to your device.</li>
+            `
+        },
+        'id': {
+            pageTitle: 'Pengunduh Musik TikTok',
+            placeholder: 'Tempel tautan TikTok di sini',
+            pasteButton: 'Tempel',
+            submitButton: 'Download',
+            instructionsTitle: 'Cara Menggunakan Website:',
+            instructions: `
+                <li>Tempel tautan video TikTok yang ingin Anda unduh pada kolom di atas.</li>
+                <li>Klik tombol "Tempel" untuk mem-paste tautan dari clipboard Anda.</li>
+                <li>Klik tombol "Download" untuk memulai proses pengunduhan.</li>
+                <li>Tunggu hingga pengunduhan selesai dan tautan unduhan muncul di bawah.</li>
+                <li>Klik tombol "Download MP3" untuk menyimpan file audio ke perangkat Anda.</li>
+            `
+        }
+    };
+
+    document.getElementById('pageTitle').textContent = translations[lang].pageTitle;
+    document.querySelector('input#videoUrl').placeholder = translations[lang].placeholder;
+    document.getElementById('pasteButton').textContent = translations[lang].pasteButton;
+    document.querySelector('button[type="submit"]').textContent = translations[lang].submitButton;
+    document.querySelector('#instructions h5').textContent = translations[lang].instructionsTitle;
+    document.getElementById('instructionList').innerHTML = translations[lang].instructions;
+};
+
+document.getElementById('lang-en').addEventListener('click', () => setLanguage('en'));
+document.getElementById('lang-id').addEventListener('click', () => setLanguage('id'));
